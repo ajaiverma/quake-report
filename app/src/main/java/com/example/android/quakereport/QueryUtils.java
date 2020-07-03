@@ -47,11 +47,12 @@ public class QueryUtils {
                 JSONObject feature = features.getJSONObject(i);
                 JSONObject properties = feature.getJSONObject("properties");
 
-                String magnitude = properties.getString("mag");
+                double magnitude = properties.getDouble("mag");
                 long time = properties.getLong("time");
                 String location = properties.getString("place");
+                String url = properties.getString("url");
 
-                earthQuakes.add(new EarthQuake(magnitude, location, time));
+                earthQuakes.add(new EarthQuake(magnitude, location, time, url));
             }
         } catch (Exception e) {
             Log.e("QueryUtils", "Error in parsing JSON results", e);
