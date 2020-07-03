@@ -2,7 +2,12 @@ package com.example.android.quakereport;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
@@ -16,19 +21,29 @@ public class EarthQuakeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
-        ArrayList<EarthQuake> earthQuakes = new ArrayList<>();
-        earthQuakes.add(new EarthQuake("7.2", "San Francisco", "Feb 2, 2016"));
-        earthQuakes.add(new EarthQuake("6.1", "London", "Feb 2, 2016"));
-        earthQuakes.add(new EarthQuake("6.1", "Tokyo", "Feb 2, 2016"));
-        earthQuakes.add(new EarthQuake("6.1", "Mexico City", "Feb 2, 2016"));
-        earthQuakes.add(new EarthQuake("6.1", "Moscow", "Feb 2, 2016"));
-        earthQuakes.add(new EarthQuake("6.1", "Rio de Janeiro", "Feb 2, 2016"));
-        earthQuakes.add(new EarthQuake("6.1", "Paris", "Feb 2, 2016"));
-
         ListView earthQuakeList = findViewById(R.id.list);
+
+        final ArrayList<EarthQuake> earthQuakes = QueryUtils.extractEarthQuakes();
 
         EarthQuakeAdapter adapter = new EarthQuakeAdapter(this, earthQuakes);
 
         earthQuakeList.setAdapter(adapter);
+
+        earthQuakeList.setOnItemClickListener(new ListView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                EarthQuake currentEarthQuake = earthQuakes.get(position);
+                String url = currentEarthQuake.getUrl();
+                openWebPage(url);
+            }
+        });
+    }
+
+    private void openWebPage(String url) {
+        Uri webpage = Uri.parse(url);
+        Intent intent = new Intent(Intent.ACTION_VIEW, webpage);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 }
